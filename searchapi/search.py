@@ -53,4 +53,4 @@ def search():
     return results
 
 if __name__ == '__main__':
-    app.run(debug=True, port=SEARCH_API_PROXY_PORT)
+    app.run(debug=False, host='0.0.0.0', port=SEARCH_API_PROXY_PORT)
