@@ -16,41 +16,44 @@ def validate_key(key):
 
 @app.route('/search', methods=['GET'])
 def search():
-    query = request.args.get('q')
-    key = request.args.get('key')
+    try:
 
-    if not validate_key(key):
-        return jsonify({'error': 'Invalid API key'}), 401
-    
-    # # Bing Search
-    # try:
-    #     response = requests.get(
-    #         'https://api.bing.microsoft.com/v7.0/search',
-    #         params={'q': query},
-    #         headers={'Ocp-Apim-Subscription-Key': BING_API_KEY}
-    #     )
-    #     response.raise_for_status()
-    #     return jsonify(response.json())
-    # except requests.HTTPError:
-    #     pass
+        query = request.args.get('q')
+        key = request.args.get('key')
 
-    # # Google Search
-    # try:
-    #     response = requests.get(
-    #         'https://www.googleapis.com/customsearch/v1',
-    #         params={'key': GOOGLE_API_KEY, 'cx': GOOGLE_CX, 'q': query}
-    #     )
-    #     response.raise_for_status()
-    #     return jsonify(response.json())
-    # except requests.HTTPError:
-    #     pass
+        if not validate_key(key):
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        # # Bing Search
+        # try:
+        #     response = requests.get(
+        #         'https://api.bing.microsoft.com/v7.0/search',
+        #         params={'q': query},
+        #         headers={'Ocp-Apim-Subscription-Key': BING_API_KEY}
+        #     )
+        #     response.raise_for_status()
+        #     return jsonify(response.json())
+        # except requests.HTTPError:
+        #     pass
 
-    # DuckDuckGo Search
-    with DDGS() as ddgs:
-        results = [r for r in ddgs.text(query, max_results=5)]
-        print("search query:%s results:%s" % (query, results))
+        # # Google Search
+        # try:
+        #     response = requests.get(
+        #         'https://www.googleapis.com/customsearch/v1',
+        #         params={'key': GOOGLE_API_KEY, 'cx': GOOGLE_CX, 'q': query}
+        #     )
+        #     response.raise_for_status()
+        #     return jsonify(response.json())
+        # except requests.HTTPError:
+        #     pass
 
-    return results
+        # DuckDuckGo Search
+        with DDGS() as ddgs:
+            results = [r for r in ddgs.text(query, max_results=5)]
+            print("search query:%s results:%s" % (query, results))
+            return results
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=SEARCH_API_PROXY_PORT)
